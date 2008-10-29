@@ -117,7 +117,7 @@ The participant's lifeline will end at the previous signal.
 ..docpicture:: uml_sequence:mscgen
     User->A: DoWork
     activate A
-    A->B: &lt;&lt;createRequest&gt;*gt;
+    A->B: &lt;&lt;createRequest&gt;&gt;
     activate B
     B->C: DoWork
     activate C
