@@ -32,14 +32,21 @@ def find_me():
     '''Just a test function.'''
     pass
 
+def register_docpicture_parser(register_parser):
+    '''for testing'''
+    print "calling register_parser inside test_docpicture"
+    register_parser(FakeParser)
+
+
 class TestDocpictureDocument(unittest.TestCase):
 
     def setUp(self):
         # an instance with no parser defined
-        self.no = docpicture.DocpictureDocument()
+        self.no = docpicture.DocpictureDocument(obj=find_me)
         # an instance with a parser defined
         self.fake = FakeParser()
-        self.yes = docpicture.DocpictureDocument(parsers = {'good': self.fake})
+        self.yes = docpicture.DocpictureDocument(parsers = {'good': self.fake},
+                                                 obj=self.fake)
         return
 
     def test_is_docpicture_directive(self):
@@ -57,7 +64,7 @@ class TestDocpictureDocument(unittest.TestCase):
     def test_retrieve_docpicture_parser(self):
         self.assert_(self.yes.retrieve_docpicture_parser("unknown") is None)
         self.assert_(self.yes.retrieve_docpicture_parser("good") is not None)
-        
+
     def test_is_docpicture_code(self):
         self.assert_(self.yes.current_parser_name == None)
         self.assert_(self.yes.indentation == None)
@@ -160,13 +167,21 @@ very good indeed</pre>
                                             "test_document_out.xml")).read()
         self.assert_(expected_output == str(self.yes.document))
         return
-    
+
     def test_find_object(self):
-        self.assert_(not self.no.find_object(self.fake, 'unknown'))
-        self.assert_(self.no.find_object(self.fake, 'draw'))
-        self.assert_(self.no.find_object(self.fake, 'find_me')==find_me)
-        self.assert_(self.no.find_object(self.fake.draw, 'find_me')==find_me)
-        self.assert_(self.no.find_object(find_me, 'FakeParser')==FakeParser)
+        self.assert_(not self.no.find_object('unknown'))
+        self.assert_(self.no.find_object('find_me')==find_me)
+        self.assert_(self.no.find_object('FakeParser')==FakeParser)
+        self.assert_(not self.yes.find_object('unknown'))
+        self.assert_(self.yes.find_object('find_me')==find_me)
+        self.assert_(self.yes.find_object('FakeParser')==FakeParser)
+
+    def test_retrieve_docpicture_parser(self):
+        self.assert_(isinstance(self.yes.retrieve_docpicture_parser('good'),
+                                FakeParser))
+        self.assert_(self.yes.retrieve_docpicture_parser('unknown') is None)
+        self.assert_(isinstance(self.no.retrieve_docpicture_parser('good'),
+                                FakeParser))
 
 if __name__ == '__main__':
     unittest.main()
