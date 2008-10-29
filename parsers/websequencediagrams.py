@@ -13,7 +13,8 @@ def register_docpicture_parser(register_parser):
 class WebSequence(BaseParser):
     '''a parser creating web sequence diagrams'''
     def __init__(self):
-        self.directive_name = 'websequence'
+        self.directive_name = 'uml_sequence'
+        self.style = "modern-blue"
 
     def get_svg_defs(self):
         '''No svg diagrams produced by this parser.'''
@@ -29,7 +30,7 @@ class WebSequence(BaseParser):
            HOWEVER, here we assume that all lines are valid lines as they are
            passed to a remote server which should deal with them...
         '''
-        div = svg.XmlElement("div", wsd_style="modern-blue")
+        div = svg.XmlElement("div", wsd_style=self.style)
         div.attributes['class'] = "wsd"
         text = "\n".join(lines)
         div.append(svg.XmlElement("pre", text=text))
