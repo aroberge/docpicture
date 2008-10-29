@@ -8,7 +8,17 @@ Aside: just for a quick test, we include another type of object.
   Alice->Bob: Authentication Request
   Bob-->Alice: Authentication Response
 
+..docpicture:: uml_sequence:rose
+  Alice->Bob: Authentication Request
+  Bob-->Alice: Authentication Response
 
+..docpicture:: uml_sequence:napkin
+  Alice->Bob: Authentication Request
+  Bob-->Alice: Authentication Response
+
+..docpicture:: uml_sequence:modern-blue
+  Alice->Bob: Authentication Request
+  Bob-->Alice: Authentication Response
 
 """
 print "Read the source."
