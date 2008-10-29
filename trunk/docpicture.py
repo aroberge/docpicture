@@ -64,6 +64,10 @@ class DocpictureDocument(object):
                 self.vertical_bar_indentation = True
 
         parser_name = result.groups()[0]
+
+        # TODO: the following needs to be cleaned up; we have some redundancies
+
+        self.retrieve_docpicture_parser(parser_name)
         if parser_name in self.parsers:
             self.current_parser_name = result.groups()[0]
             self.indentation = line.index("..docpicture")

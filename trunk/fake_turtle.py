@@ -55,7 +55,7 @@ its normal set.
 
 ..docpicture:: self.red_turtle
    turtle.down()
-   turtle.color("green")
+   turtle.color("orange")
    turtle(45).forward(200)
 
 Finally, we include a drawing with an unknown docpicture object - no
@@ -65,6 +65,9 @@ drawing will be made.
    turtle(20).forward(125)
 
 """
+
+import parsers.turtle
+import src.svg as svg
 
 class RawPen:
 
@@ -185,3 +188,54 @@ class RawPen:
            turtle(10).forward(100)
         """
         pass
+
+class RedTurtle(parsers.turtle.Turtle):
+
+    def __init__(self):
+        parsers.turtle.Turtle.__init__(self)
+        self.directive_name = 'self.red_turtle'
+
+    def get_svg_defs(self):
+        '''returns an object representing all the svg defs'''
+        defs = svg.SvgDefs()
+        defs.append(self.turtle_defs())
+        defs.append(self.plus_signs_defs())
+        return defs
+
+    def turtle_defs(self):
+        '''creates the svg:defs content for the turtle'''
+        t = svg.SvgElement("g", id="red_turtle")
+        # legs
+        t.append(svg.SvgElement("circle", cx=23, cy=16, r=8, fill="yellow"))
+        t.append(svg.SvgElement("circle", cx=23, cy=-15, r=8, fill="yellow"))
+        t.append(svg.SvgElement("circle", cx=-23, cy=16, r=8, fill="yellow"))
+        t.append(svg.SvgElement("circle", cx=-23, cy=-15, r=8, fill="yellow"))
+        # head and eyes
+        t.append(svg.SvgElement("circle", cx=32, cy=0, r=8, fill="yellow"))
+        t.append(svg.SvgElement("circle", cx=36, cy=4, r=2, fill="black"))
+        t.append(svg.SvgElement("circle", cx=36, cy=-4, r=2, fill="black"))
+        # body
+        t.append(svg.SvgElement("ellipse", cx=0, cy=0, rx=30, ry=25,
+                                fill="red"))
+        return t
+
+    def first_turtle(self):
+        '''creation of first turtle '''
+        # same as Turtle, except no filter
+        t1 = svg.SvgElement("g", transform="translate(%d, %d)"%(self.x1, self.y1))
+        _t1 = svg.SvgElement("use", x=0, y=0, transform="rotate(%s 0 0)"%(-float(self.angle1)))
+        _t1.attributes["xlink:href"] = "#red_turtle"
+        t1.append(_t1)
+        return t1
+
+    def second_turtle(self):
+        '''creation of second turtle'''
+        # same as Turtle, except no filter
+        t2 = svg.SvgElement("g", transform="translate(%d, %d)"%(self.x2, self.y2))
+        _t2 = svg.SvgElement("use", x=0, y=0, transform="rotate(%s 0 0)"%(-float(self.angle2)))
+        _t2.attributes["xlink:href"] = "#red_turtle"
+        t2.append(_t2)
+        return t2
+
+def register_docpicture_parser(register_parser):
+    register_parser(RedTurtle)
