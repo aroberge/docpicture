@@ -26,11 +26,12 @@ class DocpictureDocument(object):
     "docpicture directives".
 
     '''
-    def __init__(self, parsers=None):
+    def __init__(self, parsers=None, obj=None):
         if parsers is None:
             self.parsers = {}
         else:
             self.parsers = parsers
+        self.object_to_display = obj
         self.reset()
         self.style = """p{width:800px;}
             pre{font-size: 12pt;}
@@ -69,6 +70,22 @@ class DocpictureDocument(object):
             return True
         else:
             return False
+
+    def retrieve_docpicture_parser(self, name):
+        '''retrieves the parser to use based on its name and update the
+           known parsers, or returns None if no parser
+            with that name is known.'''
+        if name in self.parsers:
+            return self.parsers[name]
+        else:
+            register_fn = self.find_object("register_docpicture_parser")
+            if register_fn:
+                register_fn(src.parsers_loader.register_parser)
+                self.parsers = src.parsers_loader.PARSERS  # update
+                if name in self.parsers:
+                    return self.parsers[name]
+            return None
+
 
     def is_docpicture_code(self, line):
         '''return True if the indentation (number of spaces at the beginning
@@ -177,15 +194,15 @@ class DocpictureDocument(object):
         return
 
 
-    def find_object(self, obj, attr):
-        '''given an object "obj", attempts to find an attribute
-        in the module where obj is located, or an attribute of the
-        module if obj is a module'''
+    def find_object(self, attr):
+        '''Attempts to find an attribute of the module in which the
+        object to be viewed is located (or inside that object,
+        if it is a module)'''
         try:
-            return getattr(obj, attr)
+            return getattr(self.object_to_display, attr)
         except:
             try:
-                return getattr(sys.modules[obj.__module__], attr)
+                return getattr(sys.modules[self.object_to_display.__module__], attr)
             except:
                 return False
 
@@ -215,7 +232,7 @@ def view(obj):
     global threaded_server
     if not src.parsers_loader.PARSERS:
         src.parsers_loader.load_parsers()
-    xml_doc = DocpictureDocument(src.parsers_loader.PARSERS)
+    xml_doc = DocpictureDocument(src.parsers_loader.PARSERS, obj)
     xml_doc.create_document(my_help(obj))
 
     dummy = src.server.Document(str(xml_doc.document))
