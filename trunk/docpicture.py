@@ -39,6 +39,7 @@ class DocpictureDocument(object):
             .warning{color: red;}
             .bold{font-weight:bold; color:darkblue;}
             """
+        self.trusted = []
 
     def reset(self):
         '''resets (or sets) values to initial choices needed to process
@@ -47,6 +48,15 @@ class DocpictureDocument(object):
         self.vertical_bar_indentation = False
         self.current_parser_name = None
         self.included_defs = []
+
+    def trust(self, parser_name):
+        '''adds a parser name to the list of trusted parsers, so that
+           docpicture will attempt to load it if needed.
+
+           This is only to enable parsers not included in the parser/plugin
+           directory to be recognized.
+           '''
+        self.trusted.append(parser_name)
 
     def is_docpicture_directive(self, line):
         """ Identifies if a line corresponds to a docpicture directives.
@@ -81,13 +91,15 @@ class DocpictureDocument(object):
             with that name is known.'''
         if name in self.parsers:
             return self.parsers[name]
-        else:
+        elif name in self.trusted:
             register_fn = self.find_object("register_docpicture_parser")
             if register_fn:
                 register_fn(src.parsers_loader.register_parser)
                 self.parsers = src.parsers_loader.PARSERS  # update
                 if name in self.parsers:
                     return self.parsers[name]
+            return None
+        else:
             return None
 
 
