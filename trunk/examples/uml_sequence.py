@@ -42,7 +42,7 @@ You can also rename them this way to save typing.
 ..docpicture:: uml_sequence:modern-blue
     participant Bob
     participant Alice
-    participant "I have a really\nlong name" as L
+    participant "I have a really\\nlong name" as L
 
     Alice->Bob: Authentication Request
     Bob->Alice: Authentication Response
@@ -54,9 +54,9 @@ Signal to Self
 A participant can send a signal to itself.
 This will result in an arrow that turns back on itself.
 
-You may break the text into multiple lines by using "\n".
+You may break the text into multiple lines by using "\\n".
 ..docpicture:: uml_sequence:omegapple
-    Alice->Alice: This is a signal to self.\nIt also demonstrates \nmultiline \ntext.
+    Alice->Alice: This is a signal to self.\\nIt also demonstrates \\nmultiline \\ntext.
 
 
 Grouping signals together

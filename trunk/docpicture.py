@@ -8,6 +8,7 @@ import pydoc
 from StringIO import StringIO
 import re
 import sys
+from xml.sax.saxutils import escape
 
 import src.svg as svg
 import src.parsers_loader
@@ -17,6 +18,7 @@ docpicture_directive_pattern = re.compile("^\s*\.\.docpicture::\s*(.+?)$")
 # note: sometimes, the Python help display code indented with a string like:
 # "    |   ".
 indented_d_pattern = re.compile("^\s*\|\s*\.\.docpicture::\s*(.+?)$")
+bold_pattern = re.compile("&lt;span class='bold'&gt;(.+?)&lt;/span&gt;")
 
 class DocpictureDocument(object):
     '''
@@ -129,7 +131,8 @@ class DocpictureDocument(object):
         '''includes the docpicture lines of code in the document, as well as
         any lines found to have syntax errors by the parser, followed by
         the drawing itself (preceded by svg defs, if not done previously).'''
-        pre = svg.XmlElement("pre", text="\n".join(lines))
+        text = escape('\n'.join(lines))
+        pre = svg.XmlElement("pre", text=text)
         pre.attributes["class"] = "docpicture"
         self.body.append(pre)
         if len(lines) == 1:  # missing code!
@@ -142,7 +145,7 @@ class DocpictureDocument(object):
         flag, drawing = self.process_docpicture_code(lines[1:])
         if flag is not None:
             text = "WARNING: unrecognized syntax\n" + "\n".join(flag)
-            pre = svg.XmlElement("pre", text=text)
+            pre = svg.XmlElement("pre", text=escape(text))
             pre.attributes["class"] = "warning"
             self.body.append(pre)
         if self.current_parser_name not in self.included_defs:
@@ -182,11 +185,12 @@ class DocpictureDocument(object):
             if self.current_parser_name is None:
                 if not self.is_docpicture_directive(line):
                     if self.unknown_parser:
-                        text = '\n'.join(new_lines)
+                        text = escape('\n'.join(new_lines))
+                        text = bold_pattern.sub(r"<span class='bold'>\1</span>", text)
                         self.body.append(svg.XmlElement("pre", text=text))
                         warning = svg.XmlElement("pre",
-                                                 text="Unknown parser: %s"
-                                                        % self.unknown_parser)
+                                                 text=escape("Unknown parser: %s"
+                                                        % self.unknown_parser))
                         warning.attributes["class"] = "warning"
                         self.body.append(warning)
                         self.unknown_parser = False
@@ -194,9 +198,8 @@ class DocpictureDocument(object):
                     else:
                         new_lines.append(line)
                 else:
-                    # self.current_parser_name will have been set by
-                    # self.is_docpicture_directive
-                    text = '\n'.join(new_lines)
+                    text = escape('\n'.join(new_lines))
+                    text = bold_pattern.sub(r"<span class='bold'>\1</span>", text)
                     new_lines = []
                     self.body.append(svg.XmlElement("pre", text=text))
                     if self.vertical_bar_indentation:
@@ -212,11 +215,13 @@ class DocpictureDocument(object):
                     docpicture_lines = []
                     if not self.is_docpicture_directive(line):
                         if self.unknown_parser:
-                            text = '\n'.join(new_lines)
+                            text = escape('\n'.join(new_lines))
+                            text = bold_pattern.sub(
+                                        r"<span class='bold'>\1</span>", text)
                             self.body.append(svg.XmlElement("pre", text=text))
                             warning = svg.XmlElement("pre",
-                                                     text="Unknown parser: %s"
-                                                            % self.unknown_parser)
+                                                    text=escape("Unknown parser: %s"
+                                                            % self.unknown_parser))
                             warning.attributes["class"] = "warning"
                             self.body.append(warning)
                             self.unknown_parser = False
@@ -231,7 +236,8 @@ class DocpictureDocument(object):
 
         # we have to take care of the last bunch of unprocessed lines
         if new_lines:
-            text = "\n".join(new_lines)
+            text = escape("\n".join(new_lines))
+            text = bold_pattern.sub(r"<span class='bold'>\1</span>", text)
             self.body.append(svg.XmlElement("pre", text=text))
         elif docpicture_lines:
             self.embed_docpicture_code(docpicture_lines)
