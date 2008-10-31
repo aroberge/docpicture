@@ -48,6 +48,7 @@ class DocpictureDocument(object):
         self.vertical_bar_indentation = False
         self.current_parser_name = None
         self.included_defs = []
+        self.unknown_parser = False
 
     def trust(self, parser_name):
         '''adds a parser name to the list of trusted parsers, so that
@@ -57,6 +58,7 @@ class DocpictureDocument(object):
            directory to be recognized.
            '''
         self.trusted.append(parser_name)
+        print "%s is, for the duration of this session, a trusted parser." % parser_name
 
     def is_docpicture_directive(self, line):
         """ Identifies if a line corresponds to a docpicture directives.
@@ -75,14 +77,13 @@ class DocpictureDocument(object):
 
         parser_name = result.groups()[0]
 
-        # TODO: the following needs to be cleaned up; we have some redundancies
-
-        self.retrieve_docpicture_parser(parser_name)
-        if parser_name in self.parsers:
+        known_parser = self.retrieve_docpicture_parser(parser_name)
+        if known_parser:
             self.current_parser_name = result.groups()[0]
             self.indentation = line.index("..docpicture")
             return True
         else:
+            self.unknown_parser = parser_name
             return False
 
     def retrieve_docpicture_parser(self, name):
@@ -98,9 +99,9 @@ class DocpictureDocument(object):
                 self.parsers = src.parsers_loader.PARSERS  # update
                 if name in self.parsers:
                     return self.parsers[name]
-            return None
+            return False
         else:
-            return None
+            return False
 
 
     def is_docpicture_code(self, line):
@@ -146,7 +147,11 @@ class DocpictureDocument(object):
             self.body.append(pre)
         if self.current_parser_name not in self.included_defs:
             self.included_defs.append(self.current_parser_name)
-            self.body.append(self.parsers[self.current_parser_name].get_svg_defs())
+            try:
+                self.body.append(
+                    self.parsers[self.current_parser_name].get_svg_defs())
+            except:  # We should not care if a parser uses defs or not
+                pass
         self.body.append(drawing)
         return
 
@@ -167,6 +172,7 @@ class DocpictureDocument(object):
         NOT to end with a new line character.
 
         Appends the processed text inside the document body.'''
+        # TODO: Refactor this
         self.reset()
         new_lines = []
         docpicture_lines = []
@@ -175,7 +181,18 @@ class DocpictureDocument(object):
                 assert line[-1] != "\n"
             if self.current_parser_name is None:
                 if not self.is_docpicture_directive(line):
-                    new_lines.append(line)
+                    if self.unknown_parser:
+                        text = '\n'.join(new_lines)
+                        self.body.append(svg.XmlElement("pre", text=text))
+                        warning = svg.XmlElement("pre",
+                                                 text="Unknown parser: %s"
+                                                        % self.unknown_parser)
+                        warning.attributes["class"] = "warning"
+                        self.body.append(warning)
+                        self.unknown_parser = False
+                        new_lines = [line]
+                    else:
+                        new_lines.append(line)
                 else:
                     # self.current_parser_name will have been set by
                     # self.is_docpicture_directive
@@ -194,8 +211,19 @@ class DocpictureDocument(object):
                     self.embed_docpicture_code(docpicture_lines)
                     docpicture_lines = []
                     if not self.is_docpicture_directive(line):
-                        new_lines.append(line)
-                        self.current_parser_name = None
+                        if self.unknown_parser:
+                            text = '\n'.join(new_lines)
+                            self.body.append(svg.XmlElement("pre", text=text))
+                            warning = svg.XmlElement("pre",
+                                                     text="Unknown parser: %s"
+                                                            % self.unknown_parser)
+                            warning.attributes["class"] = "warning"
+                            self.body.append(warning)
+                            self.unknown_parser = False
+                            new_lines = [line]
+                        else:
+                            new_lines.append(line)
+                            self.current_parser_name = None
                     else:  # two docpicture directives in a row
                         if self.vertical_bar_indentation:
                             line = line.replace(" | ", "   ", 1)
@@ -244,12 +272,15 @@ def my_help(obj):
 
 
 threaded_server = None
+xml_doc = None
 def view(obj):
-    global threaded_server
+    global threaded_server, xml_doc
     if not src.parsers_loader.PARSERS:
         src.parsers_loader.load_parsers()
-    xml_doc = DocpictureDocument(src.parsers_loader.PARSERS, obj)
+    if xml_doc is None:
+        xml_doc = DocpictureDocument(src.parsers_loader.PARSERS, obj)
     xml_doc.create_document(my_help(obj))
+
 
     dummy = src.server.Document(str(xml_doc.document))
     if threaded_server is None:
@@ -267,7 +298,26 @@ def stop_server():
 
 
 if __name__ == "__main__":
-    import fake_turtle
+    from examples import fake_turtle, equation, uml_sequence
     view(fake_turtle)
-    dummy = raw_input("Press any key to end.")
+    print "Wait for the help page to appear in your browser."
+    dummy = raw_input("Then, press any key continue.")
+
+    xml_doc.trust("self.red_turtle")
+    print "Note that the red turtle is now processed correctly"
+    view(fake_turtle)
+    dummy = raw_input("Press any key to continue.")
+    print "We will now proceed to view the help for a single function."
+    view(fake_turtle.RawPen.color)
+    dummy = raw_input("Press any key to continue.")
+    print "We now proceed to view an equation; this needs matplotlib."
+    view(equation)
+
+    dummy = raw_input("Press any key to continue.")
+    print "We now proceed to view some uml sequences."
+    print "Note that these are created and downloaded from the web."
+    view(uml_sequence)
+
+
+    dummy = raw_input("Press any key to end the demo.")
     stop_server()

@@ -1,5 +1,5 @@
 """
-Empty module to try equations
+Empty module to try equations.
 
 ..docpicture:: equation
   E = mc^2
