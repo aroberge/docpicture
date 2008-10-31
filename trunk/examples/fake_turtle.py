@@ -4,6 +4,23 @@ a local docpicture parser included for testing) obtained through
 severely amputating the original turtle module, for the purpose of
 demonstrating the docpicture concept.
 
+We start by including a drawing made with a docpicture "parser"
+that is not part of the normal docpicture distribution, but is
+defined in this file. We *suggest* that such parser names start
+with "self." to indicate to the reader that they are defined locally.
+docpicture will handle any name - but will first look for names in
+its normal set.
+
+..docpicture:: self.red_turtle
+   turtle.down()
+   turtle.color("orange")
+   turtle(45).forward(200)
+
+
+Note that we get an error message saying that this parser is not
+recognized.  This will be changed, once this parser is set to be
+"trusted".
+
 From the original:
 ====================
 
@@ -39,20 +56,8 @@ and even
    turtle.color("red")
    turtle(20).forward(125)
 
-As an additional test, we include a drawing made with a docpicture "parser"
-that is not part of the normal docpicture distribution, but is
-defined in this file. We *suggest* that such parser names start
-with "self." to indicate to the reader that they are defined locally.
-docpicture will handle any name - but will first look for names in
-its normal set.
-
-..docpicture:: self.red_turtle
-   turtle.down()
-   turtle.color("orange")
-   turtle(45).forward(200)
-
 Finally, we include a drawing with an unknown docpicture object - no
-drawing will be made.
+drawing will ever be made.
 
 ..docpicture:: unknown
    turtle(20).forward(125)

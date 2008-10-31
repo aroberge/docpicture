@@ -16,8 +16,7 @@ except:
 
 
 def register_docpicture_parser(register_parser):
-    if matplotlib_included:
-        register_parser(Equations)
+    register_parser(Equations)
 
 class Equations(BaseParser):
     '''a parser creating web sequence diagrams'''
@@ -33,6 +32,11 @@ class Equations(BaseParser):
 
            We assume that all lines are meant to be a single line equation
         '''
+        if not matplotlib_included:
+            text = "A recent version of matplotlib is needed for this example."
+            warning = svg.XmlElement("pre", text=text)
+            warning.attributes["class"] = "warning"
+            return None, warning
         equation = ' '.join(lines)
         fig = pyplot.figure()
         fig.set_size_inches(8, 1)

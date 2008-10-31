@@ -30,13 +30,13 @@ Draw a signal from one participant to another like this:
 ..docpicture:: uml_sequence
     Alice->Bob: Authentication Request
     Bob-->Alice: Authentication Response
-                
 
-The participants are automatically created when they are used. 
+
+The participants are automatically created when they are used.
 Use the "-->" syntax to draw a dotted line.
 
-If you want to participants to be shown in a different order 
-than they are used, declare them first using the participant keyword. 
+If you want to participants to be shown in a different order
+than they are used, declare them first using the participant keyword.
 You can also rename them this way to save typing.
 
 ..docpicture:: uml_sequence:modern-blue
@@ -47,24 +47,24 @@ You can also rename them this way to save typing.
     Alice->Bob: Authentication Request
     Bob->Alice: Authentication Response
     Bob->L: Log transaction
-                
+
 
 Signal to Self
 
-A participant can send a signal to itself. 
+A participant can send a signal to itself.
 This will result in an arrow that turns back on itself.
 
 You may break the text into multiple lines by using "\n".
 ..docpicture:: uml_sequence:omegapple
     Alice->Alice: This is a signal to self.\nIt also demonstrates \nmultiline \ntext.
-                
+
 
 Grouping signals together
 
-You can group signals together using the alt/else, opt, 
-and loop keywords. All of them can take a text description that will 
-be displayed in the group header. 
-Use the end keyword to signal the end of a group. 
+You can group signals together using the alt/else, opt,
+and loop keywords. All of them can take a text description that will
+be displayed in the group header.
+Use the end keyword to signal the end of a group.
 The groups may be nested to any depth.
 
 ..docpicture:: uml_sequence:earth
@@ -81,38 +81,38 @@ The groups may be nested to any depth.
     else Another type of failure
         Bob->Alice: Please repeat
     end
-                
+
 
 Notes in the diagram
 
-You can add notes to your diagram. 
-Notes can be placed to the left of a participant or to the 
-right of a participant. In addition, you can centre a note over 
+You can add notes to your diagram.
+Notes can be placed to the left of a participant or to the
+right of a participant. In addition, you can centre a note over
 one or more participants.
 
-If a note contains more than one line, it will be not be word-wrapped. 
+If a note contains more than one line, it will be not be word-wrapped.
 Instead, it will be formatted exactly as written.
 
 ..docpicture:: uml_sequence:rose
     participant Alice
     participant Bob
 
-    note left of Alice 
-        This is displayed 
+    note left of Alice
+        This is displayed
         left of Alice.
     end note
     note right of Alice: This is displayed right of Alice.
     note over Alice: This is displayed over Alice.
     note over Alice, Bob: This is displayed over Bob and Alice.
-                
+
 
 Lifeline Activation and Destruction
 
-Use the activate and deactivate keywords to denote object activation. 
-While activated, the participant's lifeline will be highlighted. 
+Use the activate and deactivate keywords to denote object activation.
+While activated, the participant's lifeline will be highlighted.
 The activate/deactivate keywords will apply to the previous signal.
 
-You can use the destroy keyword to destroy a participant. 
+You can use the destroy keyword to destroy a participant.
 The participant's lifeline will end at the previous signal.
 ..docpicture:: uml_sequence:mscgen
     User->A: DoWork
@@ -126,10 +126,10 @@ The participant's lifeline will end at the previous signal.
     B-->A: RequestCreated
     deactivate B
     A->User: Done
-                
+
 
 Finally, we include a simple case reproduced in all available styles.
-This, together with the previous examples, is also a test to verify 
+This, together with the previous examples, is also a test to verify
 that we can embed more than one diagram of a given style.
 
 ..docpicture:: uml_sequence
@@ -156,11 +156,8 @@ that we can embed more than one diagram of a given style.
 ..docpicture:: uml_sequence:roundgreen
   A->B: testing
 
-..docpicture:: uml_sequence:modern-blue
-  A->B: testing
-
 ..docpicture:: uml_sequence:napkin
   A->B: testing
 
 """
-print "Read the source."
+pass
