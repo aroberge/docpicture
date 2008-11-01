@@ -2,7 +2,7 @@
 '''
 
 import re
-from _parser import BaseParser
+from regex_parser import BaseParser
 import src.svg as svg
 from StringIO import StringIO
 

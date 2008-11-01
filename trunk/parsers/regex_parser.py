@@ -1,6 +1,7 @@
 '''
-This module contains the base _parser class from which all parsers should be
-derived.   Some methods are implemented only to provide testing, and
+This module contains the base regex_parser class from which all
+regular expression based parsers should (?) be derived.
+Some methods are implemented only to provide testing, and
 are meant to be overriden.
 
 Note: by convention, the name of the parser class is identical to the name of
@@ -8,7 +9,7 @@ the module.  To avoid problems on different platforms, all class names
 will use lowercase letters only.
 
 The name of the parser will also be used as the docpicture label as in:
-..docpicture:: _parser
+..docpicture:: regex_parser
 
 '''
 
@@ -31,12 +32,13 @@ _patterns = {
 class BaseParser(object):
     '''Base class for all the parsers'''
     def __init__(self):
-        self.patterns = _patterns  # definitely needs to be overriden!
+        self.patterns = _patterns
+        self.directive_name = 'regex_parser'
 
     def get_svg_defs(self):
         '''returns default svg_defs; normally overriden by parsers'''
         defs = svg.SvgDefs()
-        defs.append(svg.Comment("For testing purpose"))
+        defs.append(svg.Comment("For testing purpose."))
         return defs
 
     def parse_single_line(self, line):
@@ -73,5 +75,4 @@ class BaseParser(object):
     def draw(self, lines):
         '''fake function; normally would convert parsed lines of code
            into svg drawing statements'''
-        new_lines = [str(line) for line in lines]
-        return "<pre>Drawing: " + "\nDrawing: ".join(new_lines) + "</pre>"
+        return svg.XmlElement("pre", text="Drawing goes here.")
