@@ -285,6 +285,8 @@ def view(obj):
         src.parsers_loader.load_parsers()
     if xml_doc is None:
         xml_doc = DocpictureDocument(src.parsers_loader.PARSERS, obj)
+    else:
+        xml_doc.object_to_display = obj
     xml_doc.create_document(my_help(obj))
 
 
@@ -304,34 +306,45 @@ def stop_server():
 
 
 if __name__ == "__main__":
-    from examples import fake_turtle, equation, uml_sequence, image
+    print "PLEASE NOTE: if you have matplotlib installed, you will see some"
+    print "warnings which you can safely ignore."
+    dummy = raw_input("Please, press enter to proceed with the demo.")
+
+
+    from examples import fake_turtle, equation, uml_sequence, image, unsafe_matplotlib
     view(fake_turtle)
+
     print "Please, wait for the help page to appear in your browser."
-    dummy = raw_input("Then, press any key continue.")
+    dummy = raw_input("Then, press enter to continue.")
     print "-"*78
     xml_doc.trust("self.red_turtle")
     print "Note that the red turtle is now processed correctly"
     view(fake_turtle)
-    dummy = raw_input("Press any key to continue.")
+    dummy = raw_input("Press enter to continue.")
     print "-"*78
     print "We will now proceed to view the help for a single function."
     view(fake_turtle.RawPen.color)
-    dummy = raw_input("Press any key to continue.")
+    dummy = raw_input("Press enter to continue.")
     print "-"*78
     print "We now proceed to view an equation; this needs matplotlib."
     view(equation)
-    dummy = raw_input("Press any key to continue.")
+    dummy = raw_input("Press enter to continue.")
     print "-"*78
     print "We now proceed to view some uml sequences."
     print "Note that these are created and downloaded from the web."
     view(uml_sequence)
-    dummy = raw_input("Press any key to continue.")
+    dummy = raw_input("Press enter to continue.")
     print "-"*78
     print "We now proceed to view some images."
     view(image)
 
+    # crazy example!  (not dangerous, but illustrating a potential security hole)
+    print "-"*78
+    print "As a final example, we execute a matplotlib code sample."
+    xml_doc.trust("unsafe_matplotlib")
+    view(unsafe_matplotlib)
     print "IMPORTANT: The server will shot down when you press a key at the end."
     print "If you want to see the last example, please reload the page in your"
     print "browser before pressing any key here."
-    dummy = raw_input("Press any key to end the demo.")
+    dummy = raw_input("Press enter to end the demo.")
     stop_server()
