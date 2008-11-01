@@ -4,7 +4,7 @@ directive
 '''
 
 import re
-from _parser import BaseParser
+from regex_parser import BaseParser
 import src.svg as svg
 
 def register_docpicture_parser(register_parser):
@@ -96,4 +96,3 @@ class WebSequenceNapkin(WebSequence):
     def __init__(self):
         self.directive_name = 'uml_sequence:napkin'
         self.style = "napkin"
-
