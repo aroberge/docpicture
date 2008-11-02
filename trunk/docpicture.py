@@ -90,7 +90,7 @@ class DocpictureDocument(object):
 
     def retrieve_docpicture_parser(self, name):
         '''retrieves the parser to use based on its name and update the
-           known parsers, or returns None if no parser
+           known parsers, or returns False if no parser
             with that name is known.'''
         if name in self.parsers:
             return self.parsers[name]
@@ -337,7 +337,7 @@ if __name__ == "__main__":
     print "-"*78
     print "We now proceed to view some images."
     view(image)
-
+    dummy = raw_input("Press enter to continue.")
     # crazy example!  (not dangerous, but illustrating a potential security hole)
     print "-"*78
     print "As a final example, we execute a matplotlib code sample."
