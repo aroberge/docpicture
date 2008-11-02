@@ -10,7 +10,7 @@ current_path = os.path.normpath(os.path.join(os.path.realpath(__file__), ".."))
 sys.path.insert(0, os.path.normpath(os.path.join(current_path, "..")))
 
 import docpicture
-from parsers._parser import BaseParser
+from parsers.regex_parser import BaseParser
 from src import svg
 
 class FakeParser(BaseParser):
@@ -108,7 +108,7 @@ class TestDocpictureDocument(unittest.TestCase):
         # before the code. Note that only 2 "good lines" are included in the
         # drawing, as the first line with "good" in it is the docpicture
         # directive, which is expected to be excluded.
-        expected_output = """  <body>
+        expected_output = """<body>
     <pre class="docpicture">  ..docpicture:: good
   this is a bad line
  good
@@ -119,14 +119,13 @@ good</pre>
 not</pre>
     <svg:svg width="0" height="0">
     <svg:defs>
-  <!-- For testing purpose -->
+  <!-- For testing purpose. -->
 </svg:defs>
 </svg:svg>
     <pre class="fake_drawing">('good', ())
 ('good', ())</pre>
-</body>
-"""
-        self.assert_(str(self.yes.body) == expected_output)
+</body>"""
+        self.assert_(str(self.yes.body).strip() == expected_output)
 
         self.yes.body = svg.XmlElement("body")
         self.yes.embed_docpicture_code(all_good_lines)
@@ -155,6 +154,7 @@ very good indeed</pre>
         self.yes.process_lines_of_text(lines)
         expected_output = open(os.path.join(current_path,
                                             "test_document_out.txt")).read()
+        print str(self.yes.body)
         self.assert_(expected_output == str(self.yes.body))
         return
 
@@ -179,9 +179,8 @@ very good indeed</pre>
     def test_retrieve_docpicture_parser(self):
         self.assert_(isinstance(self.yes.retrieve_docpicture_parser('good'),
                                 FakeParser))
-        self.assert_(self.yes.retrieve_docpicture_parser('unknown') is None)
-        self.assert_(isinstance(self.no.retrieve_docpicture_parser('good'),
-                                FakeParser))
+        self.assert_(not self.yes.retrieve_docpicture_parser('unknown'))
+        self.assert_(not self.no.retrieve_docpicture_parser('good'))
 
 if __name__ == '__main__':
     unittest.main()

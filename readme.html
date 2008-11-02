@@ -10,16 +10,84 @@ body{max-width:800px;}
 <p>This is the second release of docpicture (release 0.2 on October 31, 2008).  
 It is still mostly a proof of concept.
 Hopefully, it will grow to meet your needs.</p>
+<ul>
+<li><a href="#start">Basic information</a></li>
+<li><a href="#directive">docpicture syntax</a></li>
+<li><a href="#plugin">Writing a plugin</a></li>
+</ul>
+<a id="start"></a>
 <p>The idea behind docpicture is to be able to embed images inside docstrings.
 These images are defined via a domain specific language, easily understood
 by people familiar with the field, but much more expressive when viewed as actual
 images.   More information can be found on recent entries on 
 <a href="http://aroberge.blogspot.com/">my blog</a>.</p>
-<p>Simply type</p>
+<p>To view a demo, simply type</p>
 <pre>
 python docpicture.py
 </pre>
-<p>and you should be greeted with a demo.  I encourage you to read the text of
+<p>and you should be greeted with a series of examples.  
+It may be useful to read the complete text of
 each example to understand what is being done.</p>
+<p>To use docpicture from a Python interpreter, you can do as follow:</p>
+<pre>
+&gt;&gt;&gt; import docpicture
+&gt;&gt;&gt; help(some_object)  # for comparison
+&gt;&gt;&gt; docpicture.view(some_object)
+</pre>
+
+
+<a id="directive"></a>
+<h2>docpicture syntax</h2>
+
+<p>Docpicture code conform to the following "syntax":</p>
+<pre>
+  ..docpicture:: some_name even_with spaces _allowed.
+     Some code indented more than the declaration
+    more valid code (still indented more)
+
+    more valid code (blank lines are ignored)
+Not included in the docpicture code as indentation is less (or could be the same).
+</pre>
+<p>In a sense, you can think of docpicture code as a Python function body, except
+that spacing does not have to be uniformed (although it is recommended for readability).
+</p>
+<p>There is an exception to this syntax: sometimes, the help() command returns code
+that looks like this:</p>
+<pre>
+Some explanation
+    |  Some indented declaration preceded by a single "|"
+    |  More indented text.
+    |  etc.
+</pre>
+<p>Docpicture code will be recognized inside such an indented text. However,
+it should not be done intentionally.</p>
+
+<a id="plugin"></a>
+<h2>Writing a plugin</h2>
+
+<p>When docpicture encounters a "directive", it identifies the
+parser name and verifies if it is a known name.  If it is, it collects
+the docpicture code lines (identified by their indentation) and, when
+completed, passes this set of lines to the parser via a method
+with a predefined name: <code>create_drawing</code>.  The recommended minimal
+structure of a parser (which should be in a Python module inside the "parsers"
+subdirectory) is as follows:</p>
+<pre>
+import src.svg as svg              # optional, but useful
+
+def register_docpicture_parser(register_parser):
+    register_parser(ThisParser)
+
+class ThisParser(object):
+
+    def __init__(self):
+        self.directive_name = 'directive_name'
+
+    def create_drawing(self, lines):
+        # processes the code here
+        return some_xml_object
+
+</pre>
+
 </body>
 </html>

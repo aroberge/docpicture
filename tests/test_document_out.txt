@@ -18,15 +18,16 @@ are found in files of the form "test_document_out_xxx.txt" or ".xhtml"
   bad text</pre>
     <svg:svg width="0" height="0">
     <svg:defs>
-  <!-- For testing purpose -->
+  <!-- For testing purpose. -->
 </svg:defs>
 </svg:svg>
     <pre class="fake_drawing">('good', ())
 ('good', ())
 ('good', ())</pre>
     <pre>Resuming the document...
-
-..docpicture:: unknown
+</pre>
+    <pre class="warning">Unknown parser: unknown</pre>
+    <pre>..docpicture:: unknown
   this will be ignored
 
 Let's try a directive with missing code</pre>
