@@ -35,8 +35,8 @@ class TestBaseParser(unittest.TestCase):
     def test_draw_picture(self):
         lines = ["Dummy1", "Dummy2"]
         self.assert_("Drawing" in str(self.p.draw_picture(lines)))
-        self.assert_("Dummy1" in str(self.p.draw_picture(lines)))
-        self.assert_("Dummy2" in str(self.p.draw_picture(lines)))
+        for line in lines:
+            self.assert_(line in str(self.p.draw_picture(lines)))
 
     def test_create_picture(self):
         good_lines = ["This is good", "More good stuff", "All goodness"]
@@ -44,7 +44,8 @@ class TestBaseParser(unittest.TestCase):
         for line in good_lines:
             self.assert_(str(("good", ())) in 
                                     str(self.p.create_picture(good_lines)))
-        bad_lines = ["This is good", "A bad line", "More good stuff"]
+        bad_lines = good_lines[:]
+        bad_lines.insert(2, "A bad line")
         self.assert_("Error" in str(self.p.create_picture(bad_lines)))
         self.assert_("A bad line" in str(self.p.create_picture(bad_lines)))
         self.assert_("good" not in str(self.p.create_picture(bad_lines)))

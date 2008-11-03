@@ -8,11 +8,6 @@ are meant to be overriden.
 import re
 import src.svg as svg
 
-''' So as to make the parser classes more readable, we suggest that
-statement patterns, if using the re module, or the grammar definition,
-if using some other module, as well as svg "defs" be defined first,
-before the class definition.'''
-
 # To enable testing, we define at least one pattern to match.
 _patterns = {
     # anything with "good" in it is declared to be good ;-)
