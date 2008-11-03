@@ -22,6 +22,17 @@ class TestBaseParser(unittest.TestCase):
         self.assertEqual(str(self.p.get_svg_defs)[0], "<")
 
     def test_parse_single_line(self):
-        pass
+        self.assertEqual(self.p.parse_single_line(" this is good"), ("good", ()))
+        self.assertEqual(self.p.parse_single_line("this is bad"), (None, "this is bad"))
+
+    def test_draw_warning(self):
+        lines = ["Dummy1", "Dummy2"]
+        self.assert_("Warning" in str(self.p.draw_warning(lines)))
+        self.assert_("Dummy" in str(self.p.draw_warning(lines)))
+
+    def test_create_picture(self):
+        good_lines = ["This is good", "More good stuff", "All goodness"]
+        self.assert_("Drawing" in str(self.p.create_picture(good_lines)))
+
 if __name__ == '__main__':
     unittest.main()
