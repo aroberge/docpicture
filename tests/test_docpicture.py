@@ -62,8 +62,10 @@ class TestDocpictureDocument(unittest.TestCase):
         self.assert_(not self.yes.is_docpicture_directive("..docpicture:: unknown"))
 
     def test_retrieve_docpicture_parser(self):
-        self.assert_(self.yes.retrieve_docpicture_parser("unknown") is None)
-        self.assert_(self.yes.retrieve_docpicture_parser("good") is not None)
+        self.assert_(isinstance(self.yes.retrieve_docpicture_parser('good'),
+                                FakeParser))
+        self.assert_(not self.yes.retrieve_docpicture_parser('unknown'))
+        self.assert_(not self.no.retrieve_docpicture_parser('good'))
 
     def test_is_docpicture_code(self):
         self.assert_(self.yes.current_parser_name == None)
@@ -176,11 +178,6 @@ very good indeed</pre>
         self.assert_(self.yes.find_object('find_me')==find_me)
         self.assert_(self.yes.find_object('FakeParser')==FakeParser)
 
-    def test_retrieve_docpicture_parser(self):
-        self.assert_(isinstance(self.yes.retrieve_docpicture_parser('good'),
-                                FakeParser))
-        self.assert_(not self.yes.retrieve_docpicture_parser('unknown'))
-        self.assert_(not self.no.retrieve_docpicture_parser('good'))
 
 if __name__ == '__main__':
     unittest.main()
