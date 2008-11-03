@@ -1,16 +1,8 @@
 '''
 This module contains the base regex_parser class from which all
-regular expression based parsers should (?) be derived.
+regular expression based parsers could be derived.
 Some methods are implemented only to provide testing, and
 are meant to be overriden.
-
-Note: by convention, the name of the parser class is identical to the name of
-the module.  To avoid problems on different platforms, all class names
-will use lowercase letters only.
-
-The name of the parser will also be used as the docpicture label as in:
-..docpicture:: regex_parser
-
 '''
 
 import re
@@ -26,8 +18,6 @@ _patterns = {
     # anything with "good" in it is declared to be good ;-)
     'good': re.compile(".*good.*")
 }
-
-
 
 class BaseParser(object):
     '''Base class for all the parsers'''
@@ -50,30 +40,8 @@ class BaseParser(object):
                 return name, result.groups()
         return None, line
 
-    def create_drawing(self, lines):
-        '''Parses all received lines of code.
-
-           If errors are found, returns a list of line with errors and an
-           empty string, otherwise returns None (for no error) and a list of
-           lines parsed to extract the relevant information.
-        '''
-        ok_lines = []
-        problem_lines = []
-        for line in lines:
-            if line.strip() == "":
-                continue
-            result = self.parse_single_line(line)
-            if result[0] == None:
-                problem_lines.append(line)
-            else:
-                ok_lines.append(result)
-        if problem_lines:
-            return problem_lines, self.draw(ok_lines)
-        else:
-            return None, self.draw(ok_lines)
-
     def parsing_error(self, lines):
-        '''this function is meant to be replaced by a custom one.'''
+        '''this function can be replaced by a custom one.'''
         lines.insert(0, 'Error: the following lines are not parsed properly.')
         pre = svg.XmlElement("pre", text = '\n'.join(lines))
         pre.attributes['class'] = 'warning'  # defined in main program
@@ -110,7 +78,3 @@ class BaseParser(object):
         else:
             return self.draw_picture(ok_lines)
 
-    def draw(self, lines):
-        '''fake function; normally would convert parsed lines of code
-           into svg drawing statements'''
-        return svg.XmlElement("pre", text="Drawing goes here.")
