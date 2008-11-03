@@ -2,36 +2,41 @@
 <head>
 <title>Docpicture - readme</title>
 <style>
-body{max-width:800px;}
+body{max-width:800px; font-size:11pt;}
+pre, code{font-size:11pt; color:navy;}
+pre{ margin-left:1em;}
+.comment{color:darkgreen; font-style:italic;}
 </style>
 </head>
 <body>
+<h3><em>Because a picture is worth a thousand words!</em></h3>
 <h1>Welcome to docpicture!</h1>
-<p>This is the second release of docpicture (release 0.2 on October 31, 2008).  
+<p>This is the second release of docpicture (release 0.2 on October 31, 2008).
 It is still mostly a proof of concept.
 Hopefully, it will grow to meet your needs.</p>
 <ul>
-<li><a href="#start">Basic information</a></li>
+<li><a href="#start">Usage</a></li>
 <li><a href="#directive">docpicture syntax</a></li>
 <li><a href="#plugin">Writing a plugin</a></li>
 </ul>
-<a id="start"></a>
 <p>The idea behind docpicture is to be able to embed images inside docstrings.
 These images are defined via a domain specific language, easily understood
 by people familiar with the field, but much more expressive when viewed as actual
-images.   More information can be found on recent entries on 
+images.   More information can be found on recent entries on
 <a href="http://aroberge.blogspot.com/">my blog</a>.</p>
+<a id="start"></a>
+<h2>Usage</h2>
 <p>To view a demo, simply type</p>
 <pre>
 python docpicture.py
 </pre>
-<p>and you should be greeted with a series of examples.  
+<p>and you should be greeted with a series of examples.
 It may be useful to read the complete text of
 each example to understand what is being done.</p>
 <p>To use docpicture from a Python interpreter, you can do as follow:</p>
 <pre>
 &gt;&gt;&gt; import docpicture
-&gt;&gt;&gt; help(some_object)  # for comparison
+&gt;&gt;&gt; help(some_object)  <span class="comment"># for comparison</span>
 &gt;&gt;&gt; docpicture.view(some_object)
 </pre>
 
@@ -69,25 +74,42 @@ it should not be done intentionally.</p>
 parser name and verifies if it is a known name.  If it is, it collects
 the docpicture code lines (identified by their indentation) and, when
 completed, passes this set of lines to the parser via a method
-with a predefined name: <code>create_drawing</code>.  The recommended minimal
+with a predefined name: <code>create_picture</code>.  The recommended minimal
 structure of a parser (which should be in a Python module inside the "parsers"
 subdirectory) is as follows:</p>
 <pre>
-import src.svg as svg              # optional, but useful
+import src.svg as svg       <span class="comment"># optional, but useful</span>
 
 def register_docpicture_parser(register_parser):
-    register_parser(ThisParser)
+    register_parser(<b>ThisParser</b>)
 
-class ThisParser(object):
+class <b>ThisParser</b>(object):
 
     def __init__(self):
-        self.directive_name = 'directive_name'
+        self.directive_name = <b>'directive_name'</b>
 
-    def create_drawing(self, lines):
-        # processes the code here
+    def create_picture(self, lines, **kwds):
+        <span class="comment"># processes the code here</span>
         return some_xml_object
-
 </pre>
-
+<p><code>create_picture</code> is called by the main module.  It always
+passes a list of lines, as well as some other arguments which you are likely
+to not need.  These extra arguments are passed around so as to give more
+flexibility.  For example, imagine we have a parser that embeds links to
+images.  If these images are located in the same directory as the original
+Python file, the path information needs to be passed to the image parsers.
+This information, however, may turn out to be completely irrelevant to
+other parsers.  As docpiture evolves, different parsers may need different
+piece of information from the main module.  By using keyword based arguments,
+the main module may be modified to pass along extra information without
+requiring any change to the existing plugins.
+</p>
+<p>While <code>create_picture</code> is expected to return some xml [svg or
+(x)html] object
+defining or linking to an image, it could also return some object providing
+an error message if the original code was found to be incorrect.  If so,
+it may be useful to use the css class "warning", defined in docpicture.py, and
+included in each document.
+</p>
 </body>
 </html>
