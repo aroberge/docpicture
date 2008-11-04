@@ -29,16 +29,13 @@ are found in files of the form "test_document_out_xxx.txt" or ".xhtml"
   bad text
   
   good line of code</pre>
-    <pre class="warning">WARNING: unrecognized syntax
-  bad text</pre>
     <svg:svg width="0" height="0">
     <svg:defs>
   <!-- For testing purpose. -->
 </svg:defs>
 </svg:svg>
-    <pre class="fake_drawing">('good', ())
-('good', ())
-('good', ())</pre>
+    <pre class="warning">Error: the following line is not parsed properly.
+  bad text</pre>
     <pre>Resuming the document...
 </pre>
     <pre class="warning">Unknown parser: unknown</pre>
@@ -54,16 +51,19 @@ Let's try a directive with missing code</pre>
 Then, two directives in a row</pre>
     <pre class="docpicture">..docpicture:: good
   good text</pre>
-    <pre class="fake_drawing">('good', ())</pre>
+    <pre>Drawing goes here:
+('good', ())</pre>
     <pre class="docpicture">..docpicture:: good
  good text
 </pre>
-    <pre class="fake_drawing">('good', ())</pre>
+    <pre>Drawing goes here:
+('good', ())</pre>
     <pre>Normal text, followed by another directive</pre>
     <pre class="docpicture">..docpicture:: good
   good text
 </pre>
-    <pre class="fake_drawing">('good', ())</pre>
+    <pre>Drawing goes here:
+('good', ())</pre>
     <pre>End of document.</pre>
 </body>
 </html>

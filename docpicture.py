@@ -125,7 +125,7 @@ class DocpictureDocument(object):
         ''' feeds a list of lines to the appropriate docpicture parser
         and some svg (or other xml) instructions for including the
         corresponding drawing.'''
-        return self.parsers[self.current_parser_name].create_drawing(lines)
+        return self.parsers[self.current_parser_name].create_picture(lines)
 
     def embed_docpicture_code(self, lines):
         '''includes the docpicture lines of code in the document, as well as
@@ -142,12 +142,7 @@ class DocpictureDocument(object):
             self.body.append(pre)
             return
         # exclude the docpicture directive from the call
-        flag, drawing = self.process_docpicture_code(lines[1:])
-        if flag is not None:
-            text = "WARNING: unrecognized syntax\n" + "\n".join(flag)
-            pre = svg.XmlElement("pre", text=escape(text))
-            pre.attributes["class"] = "warning"
-            self.body.append(pre)
+        drawing = self.process_docpicture_code(lines[1:])
         if self.current_parser_name not in self.included_defs:
             self.included_defs.append(self.current_parser_name)
             try:

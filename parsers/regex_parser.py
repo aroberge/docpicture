@@ -37,7 +37,10 @@ class BaseParser(object):
 
     def parsing_error(self, lines):
         '''this function can be replaced by a custom one.'''
-        lines.insert(0, 'Error: the following lines are not parsed properly.')
+        if len(lines) > 1:
+            lines.insert(0, 'Error: the following lines are not parsed properly.')
+        else:
+            lines.insert(0, 'Error: the following line is not parsed properly.')
         pre = svg.XmlElement("pre", text = '\n'.join(lines))
         pre.attributes['class'] = 'warning'  # defined in main program
         return pre
@@ -52,7 +55,7 @@ class BaseParser(object):
     def create_picture(self, lines):
         '''Parses all received lines of code and return the result of
         the appropriate method, based on whether or not errors were found.
-        
+
         If errors are found, lines with errors are passed to parsing error
         as a list; otherwise, regex parsing results are passed to draw_picture
         as a list.  A parser subclassing BaseParser needs to implement
@@ -72,4 +75,3 @@ class BaseParser(object):
             return self.parsing_error(problem_lines)
         else:
             return self.draw_picture(ok_lines)
-

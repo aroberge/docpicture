@@ -6,7 +6,6 @@ sys.path.insert(0, os.path.normpath(os.path.join(os.getcwd(), "..")))
 # other imports proceed
 
 from parsers.regex_parser import BaseParser
-from src import svg
 
 class TestBaseParser(unittest.TestCase):
     ''' description '''
@@ -42,7 +41,7 @@ class TestBaseParser(unittest.TestCase):
         good_lines = ["This is good", "More good stuff", "All goodness"]
         self.assert_("Drawing" in str(self.p.create_picture(good_lines)))
         for line in good_lines:
-            self.assert_(str(("good", ())) in 
+            self.assert_(str(("good", ())) in
                                     str(self.p.create_picture(good_lines)))
         bad_lines = good_lines[:]
         bad_lines.insert(2, "A bad line")
