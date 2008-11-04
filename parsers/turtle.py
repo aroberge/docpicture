@@ -97,6 +97,8 @@ class Turtle(BaseParser):
         self.pen_down = False
         self.command = None
         self.mistakes = None
+        self.arg = None
+        self.angle1 = None
 
     def draw(self, lines):
         '''Converts parsed lines of code
@@ -106,6 +108,29 @@ class Turtle(BaseParser):
             lines = lines.insert(0, self.mistakes)
             return self.parsing_error(lines)
         return self.create_svg_object()
+
+    def extract_parameters(self, lines):
+        '''extract the numerical parameters (angle, position, etc.) and
+        color to draw the turtles.  
+        
+        Only one command among [forward, left, right] has  any effect for a 
+        given series of instructions.
+        '''
+        self.set_defaults()
+        for line in lines:
+            if line[0] in ['forward', 'left', 'right']:
+                self.command, (self.angle1, self.arg) = line
+            elif line[0] == 'color':
+                self.color = line[1][0]
+            elif line[0] == 'pen':
+                self.pen_down = (line[1][0] == 'down')
+            else:
+                self.mistakes = "Unknown command %s in compute_layout_parameters." % line[0]
+                return
+
+        if self.command == None:
+            self.mistakes = 'Invalid set of lines passed to compute_layout_parameters'
+        return
 
     def compute_layout_parameters(self, lines):
         '''calculate numerical parameters (angle, position, etc.) to draw
