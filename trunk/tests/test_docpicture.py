@@ -21,7 +21,7 @@ class FakeParser(BaseParser):
         # however, no information is retained.
         'good': re.compile(".*good.*")
         }
-    def draw(self, lines):
+    def create_drawing(self, lines):
         new_lines = [str(line) for line in lines]
         text = "\n".join(new_lines)
         pre = svg.XmlElement("pre", text=text)
@@ -34,7 +34,6 @@ def find_me():
 
 def register_docpicture_parser(register_parser):
     '''for testing'''
-    print "calling register_parser inside test_docpicture"
     register_parser(FakeParser)
 
 
@@ -85,17 +84,19 @@ class TestDocpictureDocument(unittest.TestCase):
         all_good_lines = ["  good line", "goodness", "very good indeed"]
         self.yes.current_parser_name = 'good'
 
-        bad_output = self.yes.process_docpicture_code(some_bad_lines)
-        good_output = self.yes.process_docpicture_code(all_good_lines)
+        bad_output = str(self.yes.process_docpicture_code(some_bad_lines)).strip()
+        good_output = str(self.yes.process_docpicture_code(all_good_lines)).strip()
 
-        drawing_result = """  <pre class="fake_drawing">('good', ())
+        bad_ = """<pre class="warning">Error: the following lines are not parsed properly.
+  this is a bad line
+not</pre>"""
+        good_ = """<pre>Drawing goes here:
 ('good', ())
-('good', ())</pre>
-"""
-        self.assert_(str(bad_output[1]) == drawing_result)
-        self.assert_(str(good_output[1]) == drawing_result)
-        self.assert_(bad_output[0] == ['  this is a bad line', 'not'])
-        self.assert_(good_output[0] is None)
+('good', ())
+('good', ())</pre>"""
+
+        self.assert_(bad_output == bad_)
+        self.assert_(good_output == good_)
 
     def test_embed_docpicture_code(self):
 
@@ -116,36 +117,30 @@ class TestDocpictureDocument(unittest.TestCase):
  good
 not
 good</pre>
-    <pre class="warning">WARNING: unrecognized syntax
-  this is a bad line
-not</pre>
     <svg:svg width="0" height="0">
     <svg:defs>
   <!-- For testing purpose. -->
 </svg:defs>
 </svg:svg>
-    <pre class="fake_drawing">('good', ())
-('good', ())</pre>
+    <pre class="warning">Error: the following lines are not parsed properly.
+  this is a bad line
+not</pre>
 </body>"""
         self.assert_(str(self.yes.body).strip() == expected_output)
 
         self.yes.body = svg.XmlElement("body")
         self.yes.embed_docpicture_code(all_good_lines)
-        #output = []
-        #for line in self.yes.body:
-        #    output.append(str(line))
-        #output = "\n".join(output)
-        # the second time we run a different test, the svg defs do not need to be
-        # included; also, no "bad" lines are generated.
-        expected_output = """  <body>
+        # the second time we run a different test, the svg defs do not need to
+        # be included.
+        expected_output = """<body>
     <pre class="docpicture">  ..docpicture:: good
 goodness
 very good indeed</pre>
-    <pre class="fake_drawing">('good', ())
+    <pre>Drawing goes here:
+('good', ())
 ('good', ())</pre>
-</body>
-"""
-        self.assert_(str(self.yes.body) == expected_output)
+</body>"""
+        self.assert_(str(self.yes.body).strip() == expected_output)
         return
 
     def test_process_lines_of_text(self):
@@ -156,8 +151,7 @@ very good indeed</pre>
         self.yes.process_lines_of_text(lines)
         expected_output = open(os.path.join(current_path,
                                             "test_document_out.txt")).read()
-        print str(self.yes.body)
-        self.assert_(expected_output == str(self.yes.body))
+        self.assert_(expected_output == str(self.yes.body).strip())
         return
 
     def test_create_document(self):
@@ -167,7 +161,7 @@ very good indeed</pre>
                                             text=".fake_drawing{color:green;}"))
         expected_output = open(os.path.join(current_path,
                                             "test_document_out.xml")).read()
-        self.assert_(expected_output == str(self.yes.document))
+        self.assert_(expected_output == str(self.yes.document).strip())
         return
 
     def test_find_object(self):
