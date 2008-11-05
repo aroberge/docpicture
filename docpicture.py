@@ -300,7 +300,7 @@ def stop_server():
     print "Server shut down!"
 
 
-if __name__ == "__main__":
+def demo():
     print "PLEASE NOTE: if you have matplotlib installed, you will see some"
     print "warnings which you can safely ignore."
     dummy = raw_input("Please, press enter to proceed with the demo.")
@@ -343,3 +343,6 @@ if __name__ == "__main__":
     print "browser before pressing any key here."
     dummy = raw_input("Press enter to end the demo.")
     stop_server()
+
+if __name__ == "__main__":
+    demo()
