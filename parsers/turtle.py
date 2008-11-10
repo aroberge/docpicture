@@ -100,7 +100,7 @@ class Turtle(BaseParser):
         self.arg = None
         self.angle1 = None
 
-    def draw(self, lines):
+    def draw_picture(self, lines):
         '''Converts parsed lines of code
            into svg drawing statements'''
         self.compute_layout_parameters(lines)
