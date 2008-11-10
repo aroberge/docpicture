@@ -27,7 +27,7 @@ class Equations(BaseParser):
         '''No svg diagrams produced by this parser.'''
         return svg.Comment("ignore me")
 
-    def create_drawing(self, lines):
+    def create_picture(self, lines):
         '''Parses all received lines of code.
 
            We assume that all lines are meant to be a single line equation
@@ -36,7 +36,7 @@ class Equations(BaseParser):
             text = "A recent version of matplotlib is needed for this example."
             warning = svg.XmlElement("pre", text=text)
             warning.attributes["class"] = "warning"
-            return None, warning
+            return warning
         equation = ' '.join(lines)
         fig = pyplot.figure()
         fig.set_size_inches(8, 1)
@@ -51,4 +51,4 @@ class Equations(BaseParser):
         temp_file.close()
         lines = content.split("\n")
         content = '\n'.join(lines[4:])
-        return None, content
+        return content

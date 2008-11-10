@@ -15,11 +15,11 @@ class Image(object):
         self.params = {"src=": None,
                        }
 
-    def create_drawing(self, lines):
+    def create_picture(self, lines):
         '''Converts parsed lines of code
            into svg drawing statements'''
         self.extract_parameters(lines)
-        return None, self.create_img_element()
+        return self.create_img_element()
 
     def extract_parameters(self, lines):
         '''extracts relevant parameters from instruction'''

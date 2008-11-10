@@ -102,14 +102,14 @@ class Plot(BaseParser):
     def __init__(self):
         self.directive_name = 'unsafe_matplotlib'
 
-    def create_drawing(self, lines):
+    def create_picture(self, lines):
         '''Parses all received lines of code, and exec the result
         '''
         if not matplotlib_included:
             text = "A recent version of matplotlib is needed for this example."
             warning = svg.XmlElement("pre", text=text)
             warning.attributes["class"] = "warning"
-            return None, warning
+            return warning
         full_length = len(lines[0])
         reduced_length = len(lines[0].lstrip())
         indentation = full_length - reduced_length
@@ -128,4 +128,4 @@ class Plot(BaseParser):
         temp_file.close()
         lines = content.split("\n")
         content = '\n'.join(lines[4:])
-        return None, content
+        return content
