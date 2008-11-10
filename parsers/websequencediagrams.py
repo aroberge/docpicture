@@ -28,7 +28,7 @@ class WebSequence(BaseParser):
         '''No svg diagrams produced by this parser.'''
         return svg.Comment("ignore me")
 
-    def create_drawing(self, lines):
+    def create_picture(self, lines):
         '''Parses all received lines of code.
 
            NORMALLY, If errors are found, returns a list of line with errors and
@@ -47,7 +47,7 @@ class WebSequence(BaseParser):
         main_div.append(svg.XmlElement("script",
                             type="text/javascript",
                             src="http://www.websequencediagrams.com/service.js"))
-        return None, main_div
+        return main_div
 
 class WebSequenceEarth(WebSequence):
     '''a parser creating web sequence diagrams; earth style'''
